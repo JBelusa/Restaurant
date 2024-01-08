@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 
 public class Dish {
 
-    public static int nextdishNumber = 1;
+    public static int nextDishNumber = 1;
 
-    private final int dishNumber = nextdishNumber++;
+    private final int dishNumber = nextDishNumber++;
     private String title;
     private BigDecimal price;
     private int preparationTime;
@@ -65,6 +65,8 @@ public class Dish {
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
+
+
 
 
     @Override

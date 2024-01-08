@@ -2,7 +2,7 @@ package com.engeto.restaurant;
 
 public class FileManager {
 
-    public static CookBook loadPlants(String filename) {
+    public static CookBook loadCookBook(String filename) {
         CookBook cookBook = null;
         try {
             cookBook = CookBook.loadFromFile(filename);
@@ -15,7 +15,7 @@ public class FileManager {
     }
 
     //Metoda pro uložení seznamu rostlin do souboru s požadovaným jménem
-    public static void savePlants(String filename, CookBook plantListToSave) {
+    public static void saveCookBook(String filename, CookBook plantListToSave) {
         try {
             CookBook.saveToFile(filename, plantListToSave);
         } catch (DishException e) {

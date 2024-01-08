@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class CookBook {
 
     private Dish dish;
-    private Map<Integer, Dish> cookBook;
+    private static Map<Integer, Dish> cookBook;
 
     public CookBook() {
         cookBook = new HashMap<>();
@@ -42,6 +42,10 @@ public class CookBook {
 
     public Map<Integer, Dish> getCookBook() {
         return cookBook;
+    }
+
+    public static Dish getDishByNumber(int dishNumber) {
+        return cookBook.get(dishNumber);
     }
 
 
