@@ -1,14 +1,13 @@
 import com.engeto.restaurant.*;
 
-import java.time.LocalTime;
-
 public class Main {
     public static void main(String[] args) {
         CookBook cookBook = new CookBook();
         Order order = new Order();
+        Order order2 = new Order();
 
         cookBook = FileManager.loadCookBook(Settings.getDefaultFileName());
-//        TestingData.addCookBookData(cookBook);
+        TestingData.addCookBookData(cookBook);
 
         cookBook.printDishes();
 
@@ -23,9 +22,14 @@ public class Main {
 
 
         TestingData.addOrdersData(order);
+//        TestingData.addOrdersData2(order2);
 
 
         order.printTableOrders(1);
+        order.printTableOrders(2);
+//        order2.printTableOrders(1);
+//        order2.printTableOrders(2);
+//        System.out.println(order.getOrders());
 
 
     }
