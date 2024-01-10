@@ -21,7 +21,7 @@ public class Order {
     private LocalTime fulfilmentTime;
     private boolean isPaid;
 
-    private final Map<Integer, Order> orders = new HashMap<>();
+    private static final Map<Integer, Order> orders = new HashMap<>();
 
 
     public Order(int tableNumber, int dishCount, int dishNumber, LocalTime orderedTime, boolean isPaid) {
@@ -33,30 +33,105 @@ public class Order {
         this.orderedTime = orderedTime;
         this.isPaid = false;
         this.dish = CookBook.getDishByNumber(dishNumber);
-//        orders.put(orderNumber, this);
+        this.fulfilmentTime=this.orderedTime.plusMinutes(this.dish.getPreparationTime());
+        orders.put(orderNumber, this);
     }
 
     public Order() {
 
     }
 
-    public void addOrder(Order order) {
-        orders.put(order.getOrderNumber(), order);
-    }
+    //region Getters and Setters
 
-    public int getOrderNumber() {
-        return orderNumber;
+
+    public void setOrderNumber(int orderNumber) {
+        this.orderNumber = orderNumber;
     }
 
     public int getTableNumber() {
         return tableNumber;
     }
 
-    public Map<Integer, Order> getOrders() {
-        return orders;
+    public void setTableNumber(int tableNumber) {
+        this.tableNumber = tableNumber;
     }
 
-    public void printOrder() {
+
+    public int getDishCount() {
+        return dishCount;
+    }
+
+    public void setDishCount(int dishCount) {
+        this.dishCount = dishCount;
+    }
+
+    public Dish getDish() {
+        return dish;
+    }
+
+    public void setDish(Dish dish) {
+        this.dish = dish;
+    }
+
+    public int getDishNumber() {
+        return dishNumber;
+    }
+
+
+    public void setDishNumber(int dishNumber) {
+        this.dishNumber = dishNumber;
+    }
+
+    public LocalDate getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(LocalDate orderDate) {
+        this.orderDate = orderDate;
+    }
+
+    public LocalTime getOrderedTime() {
+        return orderedTime;
+    }
+
+    public void setOrderedTime(LocalTime orderedTime) {
+        this.orderedTime = orderedTime;
+    }
+
+    public LocalTime getFulfilmentTime() {
+       return fulfilmentTime;
+
+    }
+
+    public void setFulfilmentTime(LocalTime fulfilmentTime) {
+        this.fulfilmentTime = fulfilmentTime;
+    }
+
+    public boolean isPaid() {
+        return isPaid;
+    }
+
+    public void setPaid(boolean paid) {
+        isPaid = paid;
+    }
+
+    public int getOrderNumber() {
+        return orderNumber;
+    }
+
+
+    //endregion
+
+    public void addOrder(Order order) {
+        orders.put(order.getOrderNumber(), order);
+    }
+
+    public static void resetOrderNumber() {
+        nextOrderNumber = 1;
+    }
+
+    public Map<Integer, Order> getOrders() {
+        return orders;
     }
 
 
@@ -64,25 +139,10 @@ public class Order {
         System.out.printf("**Objednávky pro stůl č. %2d **%n", tableNumber);
 //      getTableOrders(tableNumber).forEach(System.out::println);
         for (Order order : getTableOrders(tableNumber)) {
-            System.out.printf(order.getOrderNumber() + " " + order.dish.getTitle() + " " + order.dishCount + "%n");
+            System.out.printf(order.getOrderNumber() + " " + order.dish.getTitle() + " " + order.dishCount + " " + order.getFulfilmentTime() + "%n");
 
         }
     }
-
-
-//    public static Map<Integer, List<Order>> getTableOrders(int tableNumber) {
-//        Map<Integer, List<Order>> tableOrders = new HashMap<>();
-//        List<Order> ordersForTable = new ArrayList<>();
-//        for (Map.Entry<Integer, Order> order : orders.entrySet()) {
-//
-//            if (order.getValue().getTableNumber() == tableNumber) {
-//                ordersForTable.add(order.getValue());
-//                tableOrders.put(tableNumber, ordersForTable);
-//            }
-//        }
-//
-//        return tableOrders;
-//    }
 
     private List<Order> getTableOrders(int tableNumber) {
         return orders.values().stream().filter(order -> order.getTableNumber() == tableNumber).collect(Collectors.toList());

@@ -67,13 +67,11 @@ public class Dish {
     }
 
 
-
-
     @Override
     public String toString() {
         return title + '\t' +
-                "("+price +" Kč)"+ '\t' +
-                preparationTime +" min" + '\t' +
+                "(" + price + " Kč)" + '\t' +
+                preparationTime + " min" + '\t' +
                 fileName + '\t';
     }
 }
