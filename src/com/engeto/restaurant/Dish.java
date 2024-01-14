@@ -23,7 +23,7 @@ public class Dish {
         if (preparationTime > 0) {
             this.preparationTime = preparationTime;
         } else {
-            System.out.println("Čas přípravy jídla nesmí být záporný nebo nula");                                       // dodělat exception
+            System.out.println("Čas přípravy jídla nesmí být záporný nebo nula");
         }
         this.fileName = fileName;
 

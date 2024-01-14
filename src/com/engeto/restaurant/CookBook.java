@@ -3,7 +3,6 @@ package com.engeto.restaurant;
 import java.io.*;
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -101,9 +100,9 @@ public class CookBook {
         cookBook.addDish(newDish);
     }
 
-    public static void saveToFile(String filename, CookBook cookBook) throws DishException {
-        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(filename)))) {
-            for (Map.Entry<Integer, Dish> entry : cookBook.cookBook.entrySet()) {
+    public static void saveCookBookToFile(String filename, CookBook cookBook) throws DishException {
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(filename,false)))) {
+            for (Map.Entry<Integer, Dish> entry : cookBook.getCookBook().entrySet()) {
                 writer.println(entry.getValue().getTitle() + Settings.getGetFileCookBookDelimiter()
                         + entry.getValue().getPrice() + Settings.getGetFileCookBookDelimiter()
                         + entry.getValue().getPreparationTime() + Settings.getGetFileCookBookDelimiter()

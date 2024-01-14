@@ -1,4 +1,4 @@
 Kuřecí řízek obalovaný 150 g	120	20	rizek-obalovany-01
-Hranolky 150 g	105	30	hranolky-01
-Pstruh na víně 200 g	158	15	pstruh-na-vine-01
+Hranolky 150 g	105	15	hranolky-01
+Pstruh na víně 200 g	158	30	pstruh-na-vine-01
 Kofola 0,5 l	39	2	kofola-01

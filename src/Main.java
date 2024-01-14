@@ -1,38 +1,40 @@
 import com.engeto.restaurant.*;
 
+import java.math.BigDecimal;
+
 public class Main {
     public static void main(String[] args) {
         CookBook cookBook = new CookBook();
-        Order order = new Order();
-        Order order2 = new Order();
+//        Order order = new Order();
+//        Order order2 = new Order();
 
         cookBook = FileManager.loadCookBook(Settings.getDefaultFileName());
         TestingData.addCookBookData(cookBook);
 
         cookBook.printDishes();
 
-//        System.out.println(Order.getOrders());
-//        System.out.println(Order.getTableOrders(1));
-//        Order order = new Order();
-//        order.printTableOrders(1);
-//        System.out.println(Order.printTableOrders(12));
+        try {
+            CookBook.saveCookBookToFile("seznamjidel.txt", cookBook);
+        } catch (DishException e) {
+            {
+                System.err.println("Chyba při ukládání souboru. " + e.getLocalizedMessage());
+            }
+        }
 
+        System.out.println("Ojednavky ze souboru");
+        Order orderFromFile = FileManager.loadOrders(Settings.getDefaultSaveFileName());
+//                TestingData.addOrdersData(orderFromFile);
+//        System.out.println(orderFromFile.getOrders());
 
-//      CookBook.saveToFile("seznamjidel.txt", cookBook);
+        orderFromFile.printTableOrders(15);
 
+//        try {
+//            Order.saveOrderToFile("objednavky.txt", orderFromFile);
+//        }
+//        catch (OrderException e){ System.err.println("Chyba při ukládání souboru. " + e.getLocalizedMessage());
+//        }
 
-        TestingData.addOrdersData(order);
-        order.printTableOrders(1);
-        order.printTableOrders(2);
-
-//Order.resetOrderNumber();
-
-
-
-//        TestingData.addOrdersData2(order2);
-//        order2.printTableOrders(1);
-//        order2.printTableOrders(2);
-//////        System.out.println(order.getOrders());
+//        Order.resetOrderNumber();
 
 
     }

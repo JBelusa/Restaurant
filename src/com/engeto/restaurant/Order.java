@@ -1,7 +1,10 @@
 package com.engeto.restaurant;
 
+import java.io.*;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,19 +24,22 @@ public class Order {
     private LocalTime fulfilmentTime;
     private boolean isPaid;
 
-    private static final Map<Integer, Order> orders = new HashMap<>();
+    private static Map<Integer, Order> orders = new HashMap<>();
 
 
-    public Order(int tableNumber, int dishCount, int dishNumber, LocalTime orderedTime, boolean isPaid) {
+    public Order(int tableNumber, int dishCount, int dishNumber, LocalTime orderedTime) {
         this.orderNumber = nextOrderNumber++;
         this.tableNumber = tableNumber;
         this.dishCount = dishCount;
         this.dishNumber = dishNumber;
         this.orderDate = LocalDate.now();
         this.orderedTime = orderedTime;
-        this.isPaid = false;
+
         this.dish = CookBook.getDishByNumber(dishNumber);
-        this.fulfilmentTime=this.orderedTime.plusMinutes(this.dish.getPreparationTime());
+        this.fulfilmentTime = this.orderedTime.plusMinutes(this.dish.getPreparationTime());
+//        if (fulfilmentTime.isBefore(LocalTime.now())) {
+//            setPaid(true);
+//        }
         orders.put(orderNumber, this);
     }
 
@@ -99,7 +105,7 @@ public class Order {
     }
 
     public LocalTime getFulfilmentTime() {
-       return fulfilmentTime;
+        return fulfilmentTime;
 
     }
 
@@ -136,16 +142,66 @@ public class Order {
 
 
     public void printTableOrders(int tableNumber) {
+        int orderPerTable = 1;
         System.out.printf("**Objednávky pro stůl č. %2d **%n", tableNumber);
-//      getTableOrders(tableNumber).forEach(System.out::println);
-        for (Order order : getTableOrders(tableNumber)) {
-            System.out.printf(order.getOrderNumber() + " " + order.dish.getTitle() + " " + order.dishCount + " " + order.getFulfilmentTime() + "%n");
+        System.out.println("****");
 
+        for (Order order : getTableOrders(tableNumber)) {
+
+            isOrderPaid(order);
+            String isPaidString = order.isPaid ? "Zaplaceno" : "Nezaplaceno";
+            System.out.printf(orderPerTable + ". "
+                    + order.dish.getTitle() + " "
+                    + order.dishCount + "x "
+                    + "(" + order.dish.getPrice() + " Kč):\t"
+                    + order.getOrderedTime().format(DateTimeFormatter.ofPattern("HH:mm"))
+                    + "-"
+                    + order.getFulfilmentTime().format(DateTimeFormatter.ofPattern("HH:mm"))
+                    + " " + isPaidString + "%n");
+            orderPerTable++;
+        }
+        System.out.println("******");
+    }
+
+    public void printTablePrice(int tableNumber) {
+        BigDecimal tablePrice = new BigDecimal(0);
+        for (Order order : getTableOrders(tableNumber)) {
+            tablePrice = tablePrice.add(order.dish.getPrice().multiply(BigDecimal.valueOf(order.getDishCount())));
+        }
+        System.out.println(tablePrice);
+    }
+
+    private void isOrderPaid(Order order) {
+        if (order.fulfilmentTime.isBefore(LocalTime.now())) {
+            order.setPaid(true);
         }
     }
 
+
     private List<Order> getTableOrders(int tableNumber) {
-        return orders.values().stream().filter(order -> order.getTableNumber() == tableNumber).collect(Collectors.toList());
+        return orders.values()
+                .stream()
+                .filter(order -> order.getTableNumber() == tableNumber)
+                .collect(Collectors.toList());
+    }
+
+
+    public static void saveOrderToFile(String filename, Order order) throws OrderException {
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(filename)))) {
+            for (Map.Entry<Integer, Order> entry : Order.orders.entrySet()) {
+                writer.println(entry.getValue().getOrderNumber() + Settings.getGetFileCookBookDelimiter()
+                        + entry.getValue().getTableNumber() + Settings.getGetFileCookBookDelimiter()
+                        + entry.getValue().getDishCount() + Settings.getGetFileCookBookDelimiter()
+                        + entry.getValue().getDishNumber() + Settings.getGetFileCookBookDelimiter()
+                        + entry.getValue().getOrderedTime() + Settings.getGetFileCookBookDelimiter());
+
+            }
+
+
+        } catch (IOException e) {
+            throw new OrderException("Soubor \"" + filename + "\" se nepodařilo zapsat. " + e.getLocalizedMessage());
+        }
+
     }
 
 
