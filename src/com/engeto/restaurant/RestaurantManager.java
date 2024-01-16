@@ -4,11 +4,24 @@ package com.engeto.restaurant;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Scanner;
 
 public class RestaurantManager {
-Order order = new Order();
+
+
+public void unfulfilledOrders(Order orders, LocalDate date){
+    int unfulfilled = 0;
+
+    for(Order order: orders.getOrders().values()){
+        orders.isOrderPaid(order);
+        if(!order.isPaid()&&order.checkDate(date,order)){
+            unfulfilled++;
+        }
+    }
+    System.out.println("Počet rozpracovaných objednávek: " + unfulfilled);
+}
 
     public static Order loadFromFile(String filename) throws DishException {
         Order newOrder = new Order();

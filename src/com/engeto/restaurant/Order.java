@@ -37,9 +37,19 @@ public class Order {
 
         this.dish = CookBook.getDishByNumber(dishNumber);
         this.fulfilmentTime = this.orderedTime.plusMinutes(this.dish.getPreparationTime());
-//        if (fulfilmentTime.isBefore(LocalTime.now())) {
-//            setPaid(true);
-//        }
+        orders.put(orderNumber, this);
+    }
+
+    public Order(int tableNumber, int dishCount, int dishNumber, LocalTime orderedTime, LocalDate orderDate) {
+        this.orderNumber = nextOrderNumber++;
+        this.tableNumber = tableNumber;
+        this.dishCount = dishCount;
+        this.dishNumber = dishNumber;
+        this.orderDate = orderDate;
+        this.orderedTime = orderedTime;
+
+        this.dish = CookBook.getDishByNumber(dishNumber);
+        this.fulfilmentTime = this.orderedTime.plusMinutes(this.dish.getPreparationTime());
         orders.put(orderNumber, this);
     }
 
@@ -141,26 +151,31 @@ public class Order {
     }
 
 
-    public void printTableOrders(int tableNumber) {
+    public void printTableOrders(int tableNumber,LocalDate date) {
         int orderPerTable = 1;
         System.out.printf("**Objednávky pro stůl č. %2d **%n", tableNumber);
         System.out.println("****");
 
         for (Order order : getTableOrders(tableNumber)) {
-
-            isOrderPaid(order);
-            String isPaidString = order.isPaid ? "Zaplaceno" : "Nezaplaceno";
-            System.out.printf(orderPerTable + ". "
-                    + order.dish.getTitle() + " "
-                    + order.dishCount + "x "
-                    + "(" + order.dish.getPrice() + " Kč):\t"
-                    + order.getOrderedTime().format(DateTimeFormatter.ofPattern("HH:mm"))
-                    + "-"
-                    + order.getFulfilmentTime().format(DateTimeFormatter.ofPattern("HH:mm"))
-                    + " " + isPaidString + "%n");
-            orderPerTable++;
+            if (checkDate(date, order)) {
+                isOrderPaid(order);
+                String isPaidString = order.isPaid ? "Zaplaceno" : "Nezaplaceno";
+                System.out.printf(orderPerTable + ". "
+                        + order.dish.getTitle() + " "
+                        + order.dishCount + "x "
+                        + "(" + order.dish.getPrice() + " Kč):\t"
+                        + order.getOrderedTime().format(DateTimeFormatter.ofPattern("HH:mm"))
+                        + "-"
+                        + order.getFulfilmentTime().format(DateTimeFormatter.ofPattern("HH:mm"))
+                        + " " + isPaidString + "%n");
+                orderPerTable++;
+            }
         }
         System.out.println("******");
+    }
+
+    public boolean checkDate(LocalDate date, Order order) {
+        return order.getOrderDate().equals(date);
     }
 
     public void printTablePrice(int tableNumber) {
@@ -168,10 +183,10 @@ public class Order {
         for (Order order : getTableOrders(tableNumber)) {
             tablePrice = tablePrice.add(order.dish.getPrice().multiply(BigDecimal.valueOf(order.getDishCount())));
         }
-        System.out.println(tablePrice);
+        System.out.println("Celková cena objednávek pro stůl číslo " + tableNumber + ": " + tablePrice + " Kč");
     }
 
-    private void isOrderPaid(Order order) {
+    public void isOrderPaid(Order order) {
         if (order.fulfilmentTime.isBefore(LocalTime.now())) {
             order.setPaid(true);
         }
@@ -186,7 +201,7 @@ public class Order {
     }
 
 
-    public static void saveOrderToFile(String filename, Order order) throws OrderException {
+    public static void saveOrderToFile(String filename, Order order) throws DishException {
         try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(filename)))) {
             for (Map.Entry<Integer, Order> entry : Order.orders.entrySet()) {
                 writer.println(entry.getValue().getOrderNumber() + Settings.getGetFileCookBookDelimiter()
@@ -199,7 +214,7 @@ public class Order {
 
 
         } catch (IOException e) {
-            throw new OrderException("Soubor \"" + filename + "\" se nepodařilo zapsat. " + e.getLocalizedMessage());
+            throw new DishException("Soubor \"" + filename + "\" se nepodařilo zapsat. " + e.getLocalizedMessage());
         }
 
     }

@@ -4,6 +4,7 @@ import java.io.*;
 import java.math.BigDecimal;
 
 
+
 public class TestingData {
     private static void cookBookData(CookBook cookBook) {
         try (BufferedReader reader = new BufferedReader(new FileReader(Settings.getDefaultFileName()))){
@@ -26,6 +27,18 @@ public class TestingData {
     }
 
     private static void ordersData(Order order) {
+
+        //Yesterday orders
+        order.addOrder(new Order(2, 10, 1, Settings.getTimeMinutesAgo(),Settings.getDateDaysAgo()));
+        order.addOrder(new Order(2, 20, 3, Settings.getTimeMinutesAgo(),Settings.getDateDaysAgo()));
+        order.addOrder(new Order(2, 30, 2, Settings.getTimeMinutesAgo(),Settings.getDateDaysAgo()));
+        order.addOrder(new Order(2, 30, 3, Settings.getTimeMinutesAgo(),Settings.getDateDaysAgo()));
+
+        order.addOrder(new Order(15, 20, 1,Settings.getTimeMinutesAgo(),Settings.getDateDaysAgo()));
+        order.addOrder(new Order(15, 20, 2,Settings.getTimeMinutesAgo(),Settings.getDateDaysAgo()));
+        order.addOrder(new Order(15, 20, 4,Settings.getTimeMinutesAgo(),Settings.getDateDaysAgo()));
+
+        //Today orders
         order.addOrder(new Order(2, 1, 1, Settings.getTimeMinutesAgo()));
         order.addOrder(new Order(2, 2, 3, Settings.getTimeMinutesAgo()));
         order.addOrder(new Order(2, 3, 2, Settings.getTimeMinutesAgo()));
