@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -142,16 +143,13 @@ public class Order {
         orders.put(order.getOrderNumber(), order);
     }
 
-    public static void resetOrderNumber() {
-        nextOrderNumber = 1;
-    }
 
     public Map<Integer, Order> getOrders() {
         return orders;
     }
 
 
-    public void printTableOrders(int tableNumber,LocalDate date) {
+    public void printTableOrders(int tableNumber, LocalDate date) {
         int orderPerTable = 1;
         System.out.printf("**Objednávky pro stůl č. %2d **%n", tableNumber);
         System.out.println("****");
@@ -171,7 +169,7 @@ public class Order {
                 orderPerTable++;
             }
         }
-        System.out.println("******");
+        System.out.println("******\n");
     }
 
     public boolean checkDate(LocalDate date, Order order) {
@@ -200,21 +198,89 @@ public class Order {
                 .collect(Collectors.toList());
     }
 
+    public static void loadFromFile(String filename) throws OrderException {
+        Order newOrder = new Order();
+        nextOrderNumber = 1;
+        orders.clear();
 
-    public static void saveOrderToFile(String filename, Order order) throws DishException {
+        int lineNumber = 1;
+        try {
+            Scanner scanner = new Scanner(new BufferedReader(new FileReader(filename)));
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                parseLine(line, newOrder, lineNumber);
+                lineNumber++;
+            }
+        } catch (FileNotFoundException e) {
+            throw new OrderException("Soubor " + filename + " nelze otevřít");
+        }
+    }
+
+    public static void parseLine(String line, Order newOrder, int lineNumber) throws OrderException {
+        String[] blocks = line.split("\\t");
+
+        if (blocks.length != 8) {
+            throw new OrderException("Nesprávný počet položek na řádku: " + lineNumber + ". :" + line + "! Počet položek: " + blocks.length + ".");
+        }
+        int orderNumber;
+        try {
+            orderNumber = Integer.parseInt(blocks[1].trim());
+        } catch (NumberFormatException e) {
+            throw new OrderException("Nesprávně zadaný formát čísla objednávky \"" + blocks[1] + "\" na řádku " + lineNumber + ". Zadaná hodnota musí celé číslo!");
+        }
+        int tableNumber;
+        try {
+            tableNumber = Integer.parseInt(blocks[2].trim());
+        } catch (NumberFormatException e) {
+            throw new OrderException("Nesprávně zadaný formát čisla stolu \"" + blocks[2] + "\" na řádku " + lineNumber + ". Zadaná hodnota musí celé číslo!");
+        }
+
+
+        int dishNumber = 0;
+        try {
+            dishNumber = Integer.parseInt(blocks[3].trim());
+        } catch (NumberFormatException e) {
+            throw new OrderException("Nesprávně zadaný formát čísla jídla \"" + blocks[3] + "\" na řádku " + lineNumber + ". Zadaná hodnota musí celé číslo!");
+        }
+
+        LocalTime orderedTime = null;
+        try {
+            orderedTime = LocalTime.parse(blocks[4].trim());
+        } catch (DateTimeParseException e) {
+            throw new OrderException("Nesprávně zadaný času objednávky \"" + blocks[4] + "\" na řádku " + lineNumber + ". Zadaná hodnota musí být ve formátu HH:mm!");
+        }
+
+        LocalDate orderedDate = null;
+        try {
+            orderedDate = LocalDate.parse(blocks[6].trim());
+        } catch (DateTimeParseException e) {
+            throw new OrderException("Nesprávně zadaný data objednávky \"" + blocks[6] + "\" na řádku " + lineNumber + ". Zadaná hodnota musí být ve formátu YYYY-MM-DD !");
+        }
+
+
+        newOrder.addOrder(new Order(orderNumber, tableNumber, dishNumber, orderedTime,orderedDate));
+
+
+    }
+
+    public static void saveOrderToFile(String filename) throws OrderException {
         try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(filename)))) {
             for (Map.Entry<Integer, Order> entry : Order.orders.entrySet()) {
                 writer.println(entry.getValue().getOrderNumber() + Settings.getGetFileCookBookDelimiter()
                         + entry.getValue().getTableNumber() + Settings.getGetFileCookBookDelimiter()
                         + entry.getValue().getDishCount() + Settings.getGetFileCookBookDelimiter()
                         + entry.getValue().getDishNumber() + Settings.getGetFileCookBookDelimiter()
-                        + entry.getValue().getOrderedTime() + Settings.getGetFileCookBookDelimiter());
+                        + entry.getValue().getOrderedTime() + Settings.getGetFileCookBookDelimiter()
+                        + entry.getValue().getFulfilmentTime() + Settings.getGetFileCookBookDelimiter()
+                        + entry.getValue().getOrderDate() + Settings.getGetFileCookBookDelimiter()
+                        + entry.getValue().isPaid() + Settings.getGetFileCookBookDelimiter()
+                );
+
 
             }
 
-
         } catch (IOException e) {
-            throw new DishException("Soubor \"" + filename + "\" se nepodařilo zapsat. " + e.getLocalizedMessage());
+            throw new OrderException("Soubor \"" + filename + "\" se nepodařilo zapsat. " + e.getLocalizedMessage());
         }
 
     }

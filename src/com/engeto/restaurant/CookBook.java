@@ -39,7 +39,7 @@ public class CookBook {
         cookBook.remove(dishNumber);
     }
 
-    public Map<Integer, Dish> getCookBook() {
+    public static Map<Integer, Dish> getCookBook() {
         return cookBook;
     }
 
@@ -49,12 +49,14 @@ public class CookBook {
 
 
     public void printDishes() {
+        System.out.println("Seznam pokrmů:");
         for (Map.Entry<Integer, Dish> entry : cookBook.entrySet()) {
             System.out.println(entry.getKey() + ". " + entry.getValue().toString());
         }
+        System.out.println("\n");
     }
 
-    public static CookBook loadFromFile(String filename) throws DishException {
+    public static void loadFromFile(String filename) throws DishException {
         CookBook newCookBook = new CookBook();
         int lineNumber = 1;
         try {
@@ -68,14 +70,13 @@ public class CookBook {
         } catch (FileNotFoundException e) {
             throw new DishException("Soubor " + filename + " nelze otevřít");
         }
-        return newCookBook;
     }
 
     public static void parseLine(String line, CookBook cookBook, int lineNumber) throws DishException {
         String[] blocks = line.split("\\t");
 
         if (blocks.length != 4) {
-            throw new DishException("Nesprávný počet položek na řádku: " + line + "! Počet položek: " + blocks.length + ".");
+            throw new DishException("Nesprávný počet položek na řádku: " + lineNumber + ". :" + line + "! Počet položek: " + blocks.length + ".");
 
         }
         String title = blocks[0].trim();
@@ -100,9 +101,9 @@ public class CookBook {
         cookBook.addDish(newDish);
     }
 
-    public static void saveCookBookToFile(String filename, CookBook cookBook) throws DishException {
+    public static void saveCookBookToFile(String filename) throws DishException {
         try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(filename,false)))) {
-            for (Map.Entry<Integer, Dish> entry : cookBook.getCookBook().entrySet()) {
+            for (Map.Entry<Integer, Dish> entry : getCookBook().entrySet()) {
                 writer.println(entry.getValue().getTitle() + Settings.getGetFileCookBookDelimiter()
                         + entry.getValue().getPrice() + Settings.getGetFileCookBookDelimiter()
                         + entry.getValue().getPreparationTime() + Settings.getGetFileCookBookDelimiter()

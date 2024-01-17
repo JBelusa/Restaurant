@@ -1,88 +1,81 @@
 package com.engeto.restaurant;
 
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.sql.SQLOutput;
+import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Scanner;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 public class RestaurantManager {
 
+    public void unfulfilledOrders(Order orders, LocalDate date) {
+        int unfulfilled = 0;
 
-public void unfulfilledOrders(Order orders, LocalDate date){
-    int unfulfilled = 0;
-
-    for(Order order: orders.getOrders().values()){
-        orders.isOrderPaid(order);
-        if(!order.isPaid()&&order.checkDate(date,order)){
-            unfulfilled++;
-        }
-    }
-    System.out.println("Počet rozpracovaných objednávek: " + unfulfilled);
-}
-
-    public static Order loadFromFile(String filename) throws DishException {
-        Order newOrder = new Order();
-
-
-        int lineNumber = 1;
-        try {
-            Scanner scanner = new Scanner(new BufferedReader(new FileReader(filename)));
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                parseLine(line, newOrder, lineNumber);
-                lineNumber++;
+        for (Order order : orders.getOrders().values()) {
+            orders.isOrderPaid(order);
+            if (!order.isPaid() && order.checkDate(date, order)) {
+                unfulfilled++;
             }
-        } catch (FileNotFoundException e) {
-            throw new DishException("Soubor " + filename + " nelze otevřít");
         }
-//        System.out.println(newOrder.getOrders());
-
-        return newOrder;
-
+        System.out.println("Počet rozpracovaných objednávek: " + unfulfilled);
     }
 
-    public static void parseLine(String line, Order newOrder, int lineNumber) throws DishException {
-        String[] blocks = line.split("\\t");
-
-        if (blocks.length != 5) {
-            throw new DishException("Nesprávný počet položek na řádku: " + line + "! Počet položek: " + blocks.length + ".");
+    public void orderedDishList(Order orders, LocalDate date) {
+        System.out.println("\nDnes objednané jídla:");
+        Set<Dish> orderedDishes = new HashSet<>();
+        for (Order order : orders.getOrders().values()) {
+            if (order.checkDate(date, order)) {
+                orderedDishes.add(order.getDish());
+            }
         }
-        int orderNumber = 0;
-        try {
-            orderNumber = Integer.parseInt(blocks[1].trim());
-        } catch (NumberFormatException e) {
-            throw new DishException("Nesprávně zadaný formát doby přípravy \"" + blocks[2] + "\" na řádku " + lineNumber + ". Zadaná hodnota musí být uvedena v minutách!");
+        orderedDishes.forEach(System.out::println);
+    }
+
+    public void sortOrdersByOrderTime(Order orders, LocalDate date) {
+        System.out.println("\nSeřazené objednávky dle času založení:");
+        List<Order> ordersByTime = new ArrayList<>();
+
+        for (Order order : orders.getOrders().values()) {
+            if (order.checkDate(date, order)) {
+                ordersByTime.add(order);
+            }
         }
-        int tableNumber = 0;
-        try {
-            tableNumber = Integer.parseInt(blocks[2].trim());
-        } catch (NumberFormatException e) {
-            throw new DishException("Nesprávně zadaný formát doby přípravy \"" + blocks[2] + "\" na řádku " + lineNumber + ". Zadaná hodnota musí být uvedena v minutách!");
+        ordersByTime.sort(Comparator.comparing(Order::getOrderedTime));
+        for (Order order : ordersByTime) {
+            System.out.printf("Číslo objednávky: %2d Čas objednání: "
+                    + order.getOrderedTime().format(DateTimeFormatter.ofPattern("HH:mm")) + "\n", order.getOrderNumber());
+        }
+        System.out.println();
+    }
+
+    public void averageOrderTime(Order orders, LocalDate date) {
+        System.out.println("\nPrůměrný čas zpracování objednávky:");
+        Duration averageOrderTime;
+        Duration totalOrderTime = Duration.ZERO;
+        int finishedOrders = 0;
+
+        for (Order order : orders.getOrders().values()) {
+            if (order.checkDate(date, order)) {
+                finishedOrders++;
+                totalOrderTime = totalOrderTime.plus(Duration.between(order.getOrderedTime(), order.getFulfilmentTime()));
+
+            }
         }
 
+        averageOrderTime = totalOrderTime.dividedBy(finishedOrders);
 
-        int dishNumber = 0;
-        try {
-            dishNumber = Integer.parseInt(blocks[3].trim());
-        } catch (NumberFormatException e) {
-            throw new DishException("Nesprávně zadaný formát doby přípravy \"" + blocks[2] + "\" na řádku " + lineNumber + ". Zadaná hodnota musí být uvedena v minutách!");
-        }
+        String formattedAverage = String.format("%02d:%02d:%02d",
+                averageOrderTime.toHours(),
+                averageOrderTime.toMinutesPart(),
+                averageOrderTime.toSecondsPart());
 
-        LocalTime orderedTime;
-        try {
-            orderedTime = LocalTime.parse(blocks[4].trim());
-        } catch (NumberFormatException e) {
-            throw new DishException("Nesprávně zadaný formát doby přípravy \"" + blocks[2] + "\" na řádku " + lineNumber + ". Zadaná hodnota musí být uvedena v minutách!");
-        }
-
-
-        newOrder.addOrder(new Order(orderNumber, tableNumber, dishNumber, orderedTime));
+        System.out.println(formattedAverage);
 
 
     }
-
 
 }
+
+
+
