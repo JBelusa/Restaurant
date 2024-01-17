@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class CookBook {
 
-    private Dish dish;
+
     private static Map<Integer, Dish> cookBook;
 
     public CookBook() {
@@ -102,7 +102,7 @@ public class CookBook {
     }
 
     public static void saveCookBookToFile(String filename) throws DishException {
-        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(filename,false)))) {
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(filename, false)))) {
             for (Map.Entry<Integer, Dish> entry : getCookBook().entrySet()) {
                 writer.println(entry.getValue().getTitle() + Settings.getGetFileCookBookDelimiter()
                         + entry.getValue().getPrice() + Settings.getGetFileCookBookDelimiter()

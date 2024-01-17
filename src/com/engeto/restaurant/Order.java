@@ -22,7 +22,7 @@ public class Order {
 
     private LocalDate orderDate;
     private LocalTime orderedTime;
-    private LocalTime fulfilmentTime;
+    private LocalTime fulfilmentTime = LocalTime.of(0, 0);
     private boolean isPaid;
 
     private static Map<Integer, Order> orders = new HashMap<>();
@@ -37,7 +37,9 @@ public class Order {
         this.orderedTime = orderedTime;
 
         this.dish = CookBook.getDishByNumber(dishNumber);
+
         this.fulfilmentTime = this.orderedTime.plusMinutes(this.dish.getPreparationTime());
+
         orders.put(orderNumber, this);
     }
 
@@ -181,7 +183,7 @@ public class Order {
         for (Order order : getTableOrders(tableNumber)) {
             tablePrice = tablePrice.add(order.dish.getPrice().multiply(BigDecimal.valueOf(order.getDishCount())));
         }
-        System.out.println("Celková cena objednávek pro stůl číslo " + tableNumber + ": " + tablePrice + " Kč");
+        System.out.println("Celková cena objednávek pro stůl číslo " + tableNumber + ": " + tablePrice + " Kč\n");
     }
 
     public void isOrderPaid(Order order) {
@@ -258,7 +260,7 @@ public class Order {
         }
 
 
-        newOrder.addOrder(new Order(orderNumber, tableNumber, dishNumber, orderedTime,orderedDate));
+        newOrder.addOrder(new Order(orderNumber, tableNumber, dishNumber, orderedTime, orderedDate));
 
 
     }

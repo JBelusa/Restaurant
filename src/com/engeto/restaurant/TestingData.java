@@ -39,6 +39,8 @@ public class TestingData {
     }
 
     public static void addOrdersData(Order order) {
-                    ordersData(order);
-            }
+        if (!CookBook.getCookBook().isEmpty()) {
+            ordersData(order);
+        }
+    }
 }

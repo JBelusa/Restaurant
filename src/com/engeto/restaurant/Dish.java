@@ -51,7 +51,9 @@ public class Dish {
     }
 
     public int getPreparationTime() {
+
         return preparationTime;
+
     }
 
     public void setPreparationTime(int preparationTime) {

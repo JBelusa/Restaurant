@@ -23,23 +23,27 @@ public class Main {
         //Seznam pokrmů se uloží do souboru
         FileManager.saveCookBook(Settings.getCookBookFileName());
 
-
         //Přidání objednávek dle zadání
         // objednávky jsou pro otestování ověření platby založeny před zvolenými minutami (viz Settings)
+
         TestingData.addOrdersData(orderFromFile);
+
 
         //Vypsání celkové konzumace za dnešní den pro zadané stoly
         orderFromFile.printTableOrders(15, LocalDate.now());
         orderFromFile.printTableOrders(2, LocalDate.now());
 
+        //Vypsání celkové ceny konzumace pro stůl číslo 15
+        orderFromFile.printTablePrice(15);
+
         //Vypsání počtu rozpracovaných objednávek
         restaurantManager.unfulfilledOrders(orderFromFile, LocalDate.now());
 
         //Vypsání seřazených objednávek pro dnešní den dle času
-        restaurantManager.sortOrdersByOrderTime(orderFromFile,LocalDate.now());
+        restaurantManager.sortOrdersByOrderTime(orderFromFile, LocalDate.now());
 
         //Průměrná doba zpracování jedné objednávky
-        restaurantManager.averageOrderTime(orderFromFile,LocalDate.now());
+        restaurantManager.averageOrderTime(orderFromFile, LocalDate.now());
 
         //Vypsání dnes objednaných jídel
         restaurantManager.orderedDishList(orderFromFile, LocalDate.now());

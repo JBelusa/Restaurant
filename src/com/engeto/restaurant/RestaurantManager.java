@@ -54,6 +54,7 @@ public class RestaurantManager {
         Duration averageOrderTime;
         Duration totalOrderTime = Duration.ZERO;
         int finishedOrders = 0;
+        String formattedAverage = "";
 
         for (Order order : orders.getOrders().values()) {
             if (order.checkDate(date, order)) {
@@ -62,13 +63,14 @@ public class RestaurantManager {
 
             }
         }
+        if (finishedOrders > 0) {
+            averageOrderTime = totalOrderTime.dividedBy(finishedOrders);
+            formattedAverage = String.format("%02d:%02d:%02d",
+                    averageOrderTime.toHours(),
+                    averageOrderTime.toMinutesPart(),
+                    averageOrderTime.toSecondsPart());
+        }
 
-        averageOrderTime = totalOrderTime.dividedBy(finishedOrders);
-
-        String formattedAverage = String.format("%02d:%02d:%02d",
-                averageOrderTime.toHours(),
-                averageOrderTime.toMinutesPart(),
-                averageOrderTime.toSecondsPart());
 
         System.out.println(formattedAverage);
 
