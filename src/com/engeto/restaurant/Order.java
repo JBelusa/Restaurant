@@ -38,7 +38,7 @@ public class Order {
 
         this.dish = CookBook.getDishByNumber(dishNumber);
 
-        this.fulfilmentTime = this.orderedTime.plusMinutes(this.dish.getPreparationTime());
+        setFulfilmentTime(fulfilmentTime);
 
         orders.put(orderNumber, this);
     }
@@ -52,7 +52,7 @@ public class Order {
         this.orderedTime = orderedTime;
 
         this.dish = CookBook.getDishByNumber(dishNumber);
-        this.fulfilmentTime = this.orderedTime.plusMinutes(this.dish.getPreparationTime());
+        setFulfilmentTime(fulfilmentTime);
         orders.put(orderNumber, this);
     }
 
@@ -123,10 +123,10 @@ public class Order {
     }
 
     public void setFulfilmentTime(LocalTime fulfilmentTime) {
-        this.fulfilmentTime = fulfilmentTime;
+        this.fulfilmentTime = this.orderedTime.plusMinutes(this.dish.getPreparationTime());
     }
 
-    public boolean isPaid() {
+    public boolean getPaid() {
         return isPaid;
     }
 
@@ -158,7 +158,7 @@ public class Order {
 
         for (Order order : getTableOrders(tableNumber)) {
             if (checkDate(date, order)) {
-                isOrderPaid(order);
+                isPaid(order);
                 String isPaidString = order.isPaid ? "Zaplaceno" : "Nezaplaceno";
                 System.out.printf(orderPerTable + ". "
                         + order.dish.getTitle() + " "
@@ -186,7 +186,7 @@ public class Order {
         System.out.println("Celková cena objednávek pro stůl číslo " + tableNumber + ": " + tablePrice + " Kč\n");
     }
 
-    public void isOrderPaid(Order order) {
+    public void isPaid(Order order) {
         if (order.fulfilmentTime.isBefore(LocalTime.now())) {
             order.setPaid(true);
         }
@@ -275,7 +275,7 @@ public class Order {
                         + entry.getValue().getOrderedTime() + Settings.getGetFileCookBookDelimiter()
                         + entry.getValue().getFulfilmentTime() + Settings.getGetFileCookBookDelimiter()
                         + entry.getValue().getOrderDate() + Settings.getGetFileCookBookDelimiter()
-                        + entry.getValue().isPaid() + Settings.getGetFileCookBookDelimiter()
+                        + entry.getValue().getPaid() + Settings.getGetFileCookBookDelimiter()
                 );
 
 

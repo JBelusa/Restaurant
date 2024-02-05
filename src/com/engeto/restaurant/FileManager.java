@@ -5,16 +5,18 @@ import java.io.*;
 public class FileManager {
 
 
-    public static void loadCookBook(String filename) {
+    public static CookBook loadCookBook(String filename) {
+        CookBook newCookBook = null;
         try {
             new FileOutputStream(Settings.getCookBookFileName(), true).close();
 
-            CookBook.loadFromFile(filename);
+            newCookBook = CookBook.loadFromFile(filename);
         } catch (DishException | FileNotFoundException e) {
             System.err.println("Soubor " + Settings.getCookBookFileName() + " se nepodařilo otevřít: " + e.getLocalizedMessage());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        return newCookBook;
     }
 
     public static void saveCookBook(String filename) {

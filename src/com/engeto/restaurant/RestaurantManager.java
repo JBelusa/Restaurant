@@ -13,8 +13,8 @@ public class RestaurantManager {
         int unfulfilled = 0;
 
         for (Order order : orders.getOrders().values()) {
-            orders.isOrderPaid(order);
-            if (!order.isPaid() && order.checkDate(date, order)) {
+            orders.isPaid(order);
+            if (!order.getPaid() && order.checkDate(date, order)) {
                 unfulfilled++;
             }
         }
@@ -27,6 +27,7 @@ public class RestaurantManager {
         for (Order order : orders.getOrders().values()) {
             if (order.checkDate(date, order)) {
                 orderedDishes.add(order.getDish());
+
             }
         }
         orderedDishes.forEach(System.out::println);
@@ -49,9 +50,9 @@ public class RestaurantManager {
         System.out.println();
     }
 
-    public void averageOrderTime(Order orders, LocalDate date) {
+    public Duration averageOrderTime(Order orders, LocalDate date) {
         System.out.println("\nPrůměrný čas zpracování objednávky:");
-        Duration averageOrderTime;
+        Duration averageOrderTime = null;
         Duration totalOrderTime = Duration.ZERO;
         int finishedOrders = 0;
         String formattedAverage = "";
@@ -73,6 +74,7 @@ public class RestaurantManager {
 
 
         System.out.println(formattedAverage);
+        return averageOrderTime;
 
 
     }

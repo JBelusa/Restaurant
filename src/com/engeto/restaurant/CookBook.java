@@ -56,7 +56,7 @@ public class CookBook {
         System.out.println("\n");
     }
 
-    public static void loadFromFile(String filename) throws DishException {
+    public static CookBook loadFromFile(String filename) throws DishException {
         CookBook newCookBook = new CookBook();
         int lineNumber = 1;
         try {
@@ -70,6 +70,7 @@ public class CookBook {
         } catch (FileNotFoundException e) {
             throw new DishException("Soubor " + filename + " nelze otevřít");
         }
+        return newCookBook;
     }
 
     public static void parseLine(String line, CookBook cookBook, int lineNumber) throws DishException {

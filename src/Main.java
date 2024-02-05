@@ -5,14 +5,14 @@ import java.time.LocalDate;
 public class Main {
     public static void main(String[] args) {
 
-        CookBook cookBook = new CookBook();
+        CookBook cookBook;
         Order orderFromFile = new Order();
         RestaurantManager restaurantManager = new RestaurantManager();
 
         System.out.println("\n------Testovací aplikace 1. projekt: Restaurace");
 
         //Načtení seznamu jídel z disku - soubor se automaticky vytvoří
-        FileManager.loadCookBook(Settings.getCookBookFileName());
+        cookBook = FileManager.loadCookBook(Settings.getCookBookFileName());
 
         //Přidání pokrmů do seznamu dle zadání
         TestingData.addCookBookData(cookBook);
@@ -45,8 +45,10 @@ public class Main {
         //Průměrná doba zpracování jedné objednávky
         restaurantManager.averageOrderTime(orderFromFile, LocalDate.now());
 
+
         //Vypsání dnes objednaných jídel
         restaurantManager.orderedDishList(orderFromFile, LocalDate.now());
+
 
         //Uložení seznamu objednávek do souboru se názvem dle data a času uložení
         FileManager.saveOrders(Settings.getDateOrderFilename() + "_objednavky.txt");

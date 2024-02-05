@@ -28,14 +28,14 @@ public class TestingData {
     private static void ordersData(Order order) {
 
         //Today orders
-        order.addOrder(new Order(2, 1, 1, Settings.getTimeMinutesAgo().minusMinutes(1)));
-        order.addOrder(new Order(2, 2, 3, Settings.getTimeMinutesAgo().plusMinutes(2)));
-        order.addOrder(new Order(2, 3, 2, Settings.getTimeMinutesAgo().minusMinutes(3)));
-        order.addOrder(new Order(2, 3, 4, Settings.getTimeMinutesAgo().plusMinutes(4)));
+        new Order(2, 1, 1, Settings.getTimeMinutesAgo().minusMinutes(1));
+        new Order(2, 2, 3, Settings.getTimeMinutesAgo().plusMinutes(2));
+        new Order(2, 3, 2, Settings.getTimeMinutesAgo().minusMinutes(3));
+        new Order(2, 3, 4, Settings.getTimeMinutesAgo().plusMinutes(4));
 
-        order.addOrder(new Order(15, 2, 1, Settings.getTimeMinutesAgo().minusMinutes(2)));
-        order.addOrder(new Order(15, 2, 2, Settings.getTimeMinutesAgo().plusMinutes(3)));
-        order.addOrder(new Order(15, 2, 4, Settings.getTimeMinutesAgo().plusMinutes(1)));
+        new Order(15, 2, 1, Settings.getTimeMinutesAgo().minusMinutes(2));
+        new Order(15, 2, 2, Settings.getTimeMinutesAgo().plusMinutes(3));
+        new Order(15, 2, 4, Settings.getTimeMinutesAgo().plusMinutes(1));
     }
 
     public static void addOrdersData(Order order) {
